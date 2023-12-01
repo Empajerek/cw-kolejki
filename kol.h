@@ -2,6 +2,7 @@
 #define KOL_H
 
 #include <vector>
+#include <deque>
 
 // Wszędzie w zadaniu można założyć, że wskaźniki przekazywane do funkcji są
 // wskaźnikami na struktury interesant, które były kiedyś wynikiem funkcji
@@ -10,11 +11,9 @@
 // UWAGA: funkcja "numerek" powinna działać również dla interesantów
 // niestojących w żadnej kolejce, a nawet po wywołaniu "zamkniecie_urzedu"
 
-// Należy wypełnić
 struct interesant {
-    // Twój kod zaczyna się tu
-
-    // A kończy tu
+    int numerek;
+    int kolejka
 };
 
 /**
@@ -30,7 +29,6 @@ void otwarcie_urzedu(int m);
  * @param k numer okienka, do którego ustawia się nowy interesant
  * @return interesant* wskaźnik na strukturę nowego interesanta
  */
-
 interesant *nowy_interesant(int k);
 
 /**
@@ -45,7 +43,6 @@ interesant *nowy_interesant(int k);
  * @param i wskaźnik na interesanta
  * @return int numerek interesanta
  */
-
 int numerek(interesant *i);
 
 /**
@@ -54,7 +51,6 @@ int numerek(interesant *i);
  * @param k numer okienka przy którym obsługiwany jest interesant
  * @return interesant* obsłużony interesant lub NULL jeśli kolejka była pusta
  */
-
 interesant *obsluz(int k);
 
 /**
@@ -65,7 +61,6 @@ interesant *obsluz(int k);
  * @param i interesant zmieniający okienko
  * @param k numer okienka, do którego przechodzi interesant i
  */
-
 void zmiana_okienka(interesant *i, int k);
 
 /**
@@ -75,7 +70,6 @@ void zmiana_okienka(interesant *i, int k);
  * @param k1 Zamykane okienko
  * @param k2 Okienko do którego przechodzą interesanci
  */
-
 void zamkniecie_okienka(int k1, int k2);
 
 /**
@@ -90,7 +84,6 @@ void zamkniecie_okienka(int k1, int k2);
  * @return std::vector<interesant *> Wszyscy ekspresowo obsłużeni interesanci w
  * kolejności w której stali w kolejce, zaczynając od i1 a kończąc na i2
  */
-
 std::vector<interesant *> fast_track(interesant *i1, interesant *i2);
 
 /**
@@ -98,7 +91,6 @@ std::vector<interesant *> fast_track(interesant *i1, interesant *i2);
  *
  * @param k numer okienka, którego kolejkę odwraca naczelnik
  */
-
 void naczelnik(int k);
 
 /**
@@ -107,7 +99,6 @@ void naczelnik(int k);
  * @return std::vector<interesant *> wszyscy interesanci którzy jeszcze stali w
  * kolejkach, uporządkowani wg numeru okienka i następnie porządku kolejki
  */
-
 std::vector<interesant *> zamkniecie_urzedu();
 
 #endif
