@@ -13,8 +13,21 @@ void otwarcie_urzedu(int m){
         kolejki.push_back(std::deque<interesant*>());
 }
 
+/*
+                     _ _.-'`-._ _
+                    ;.'________'.;
+         _________n.[____________].n_________
+        |""_""_""_""||==||==||==||""_""_""_""]
+        |"""""""""""||..||..||..||"""""""""""|
+        |LI LI LI LI||LI||LI||LI||LI LI LI LI|
+        |.. .. .. ..||..||..||..||.. .. .. ..|
+        |LI LI LI LI||LI||LI||LI||LI LI LI LI|
+     ,,;;,;;;,;;;,;;;,;;;,;;;,;;;,;;,;;;,;;;,;;,,
+    ;;jgs;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+*/
+
 interesant *nowy_interesant(int k){
-    interesant* new_interesant = new interesant;
+    interesant* new_interesant = new interesant();
     new_interesant->numerek = numerki++;
     new_interesant->kolejka = k;
     kolejki[k].push_back(new_interesant);
@@ -73,7 +86,6 @@ std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
 void naczelnik(int k){
     std::reverse(kolejki[k].begin(),kolejki[k].end());
 }
-
 
 std::vector<interesant *> zamkniecie_urzedu(){
     // obsługujemy pozostałych interesantów
