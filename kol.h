@@ -13,7 +13,7 @@
 
 struct interesant {
     int numerek;
-    int kolejka
+    int kolejka;
 };
 
 /**
