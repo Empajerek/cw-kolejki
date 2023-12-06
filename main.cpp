@@ -27,6 +27,7 @@ int main() {
   // 0: i2, i3, i5, i4  | 1: i1  | 2:
   naczelnik(0);
   // 0: i4, i5, i3, i2  | 1: i1  | 2:
+
   std::vector<interesant*> v(fast_track(i5, i2));
   // 0: i4  | 1: i1  | 2:
   assert(v.size() == 3U);

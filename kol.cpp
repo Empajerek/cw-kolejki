@@ -8,11 +8,18 @@
 std::vector<interesant*> kolejki;
 int numerki = 0;
 
+interesant* nastepny(interesant* current, interesant* previous){
+    if(current->przed == previous)
+        return current->po;
+    return current->przed;
+}
+
 void otwarcie_urzedu(int m){
     for(int i = 0; i < m; i++){
         interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
         new_interesant->przed = new_interesant;
         new_interesant->po = new_interesant;
+        new_interesant->numerek = 0;
         kolejki.push_back(new_interesant);
     }
 }
@@ -31,10 +38,19 @@ void otwarcie_urzedu(int m){
 */
 
 interesant *nowy_interesant(int k){
-    interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
+    interesant* new_interesant = (interesant*) malloc(sizeof(interesant));    
     new_interesant->numerek = numerki++;
-    kolejki[k]->przed->po = new_interesant;
-    kolejki[k]->przed = new_interesant;
+    if(kolejki[k]->numerek == 0){
+        new_interesant->przed = kolejki[k]->przed;
+        new_interesant->po = kolejki[k];
+        kolejki[k]->przed->po = new_interesant;
+        kolejki[k]->przed = new_interesant;
+    }else{
+        new_interesant->po = kolejki[k]->po;
+        new_interesant->przed = kolejki[k];
+        kolejki[k]->po->przed = new_interesant;
+        kolejki[k]->po = new_interesant;
+    }
     return new_interesant;
 }
 
@@ -45,12 +61,18 @@ int numerek(interesant *i){
 interesant *obsluz(int k){
     if(kolejki[k]->po == kolejki[k]->przed)
         return NULL;
-    interesant* obsluzony = kolejki[k]->po;
-    kolejki[k]->po = obsluzony->po;
-    kolejki[k]->po->przed = kolejki[k];
+    if(kolejki[k]->numerek == 0){
+        interesant* obsluzony = kolejki[k]->po;
+        kolejki[k]->po = obsluzony->po;
+        kolejki[k]->po->przed = kolejki[k];
+    }else{
+        interesant* obsluzony = kolejki[k]->przed;
+        kolejki[k]->przed = obsluzony->przed;
+        kolejki[k]->przed->po = kolejki[k]; 
+    }
     return obsluzony;
 }
-
+// -------------------------------------------------
 void zmiana_okienka(interesant *i, int k){
     i->przed->po = i->po;
     i->po->przed = i->przed;
@@ -69,18 +91,17 @@ std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
     std::vector<interesant*> obsluzeni;
     interesant* temp = i1->przed;
     while(i1->przed != i2){
+        printf("%d\n", i1->numerek);
         obsluzeni.push_back(i1);
         i1 = i1->po;
     }
     i1->przed = temp;
-    temp->po = i2;
+    temp->po = i1;
     return obsluzeni;
 }
 
 void naczelnik(int k){
-    interesant* temp = kolejki[k]->po;
-    kolejki[k]->po = kolejki[k]->przed;
-    kolejki[k]->przed = temp;
+    kolejki[k]->numerek = -1;
 }
 
 std::vector<interesant *> zamkniecie_urzedu(){
