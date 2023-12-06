@@ -4,13 +4,17 @@
 #include <algorithm>
 #include "kol.h"
 
-// inicjujemy urząd w postaci wektora kolejek
-std::vector<std::deque<interesant*>> kolejki;
+// inicjujemy urząd w postaci wektora
+std::vector<interesant*> kolejki;
 int numerki = 0;
 
 void otwarcie_urzedu(int m){
-    for(int i = 0; i < m; i++)
-        kolejki.push_back(std::deque<interesant*>());
+    for(int i = 0; i < m; i++){
+        interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
+        new_interesant->przed = new_interesant;
+        new_interesant->po = new_interesant;
+        kolejki.push_back(new_interesant);
+    }
 }
 
 /*
@@ -27,10 +31,10 @@ void otwarcie_urzedu(int m){
 */
 
 interesant *nowy_interesant(int k){
-    interesant* new_interesant = new interesant();
+    interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
     new_interesant->numerek = numerki++;
-    new_interesant->kolejka = k;
-    kolejki[k].push_back(new_interesant);
+    kolejki[k]->przed->po = new_interesant;
+    kolejki[k]->przed = new_interesant;
     return new_interesant;
 }
 
@@ -39,61 +43,52 @@ int numerek(interesant *i){
 }
 
 interesant *obsluz(int k){
-    // jeśli pusta to NULL
-    if(kolejki[k].empty())
+    if(kolejki[k]->po == kolejki[k]->przed)
         return NULL;
-    // jeśli nie to obsługujemy
-    interesant* obsluzony = kolejki[k].front();
-    kolejki[k].pop_front();
+    interesant* obsluzony = kolejki[k]->po;
+    kolejki[k]->po = obsluzony->po;
+    kolejki[k]->po->przed = kolejki[k];
     return obsluzony;
 }
 
 void zmiana_okienka(interesant *i, int k){
-    // wyrzucamy iteresanta z kolejki
-    kolejki[i->kolejka].erase(std::remove(kolejki[i->kolejka].begin(),
-                                          kolejki[i->kolejka].end(), i),
-                              kolejki[i->kolejka].end());
-    // i dorzucamy do nowej
-    kolejki[k].push_back(i);
-    i->kolejka = k;             
+    i->przed->po = i->po;
+    i->po->przed = i->przed;
+    kolejki[k]->przed->po = i;
+    kolejki[k]->przed = i;
 }
 
 void zamkniecie_okienka(int k1, int k2){
-    // doklejamy kolejke k1 do k2
-    kolejki[k2].insert(kolejki[k2].end(), 
-                             kolejki[k1].begin(), 
-                             kolejki[k1].end());
-    // i czyścimy k1
-    kolejki[k1].clear();
+    kolejki[k2]->przed->po = kolejki[k1]->po;
+    kolejki[k2]->przed = kolejki[k1]->przed;
+    kolejki[k1]->przed = kolejki[k1];
+    kolejki[k1]->po = kolejki[k1];
 }
-
 
 std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
     std::vector<interesant*> obsluzeni;
-    // wyszukujemy i1 i i2
-    auto indexI1 = std::find(kolejki[i1->kolejka].begin(), 
-                             kolejki[i1->kolejka].end(), i1);
-    auto indexI2 = std::find(kolejki[i2->kolejka].begin(), 
-                             kolejki[i2->kolejka].end(), i2);
-    // i obsługujemy interesantów z przedziału i1 - i2
-    for(auto obsluzony = indexI1; obsluzony <= indexI2; obsluzony++)
-        obsluzeni.push_back(*obsluzony);
-    kolejki[i1->kolejka].erase(indexI1, indexI2 + 1);
+    interesant* temp = i1->przed;
+    while(i1->przed != i2){
+        obsluzeni.push_back(i1);
+        i1 = i1->po;
+    }
+    i1->przed = temp;
+    temp->po = i2;
     return obsluzeni;
 }
 
-
 void naczelnik(int k){
-    std::reverse(kolejki[k].begin(),kolejki[k].end());
+    interesant* temp = kolejki[k]->po;
+    kolejki[k]->po = kolejki[k]->przed;
+    kolejki[k]->przed = temp;
 }
 
 std::vector<interesant *> zamkniecie_urzedu(){
-    // obsługujemy pozostałych interesantów
     std::vector<interesant*> obsluzeni;
-    for(auto kolejka : kolejki)
-        for(auto obsluzony : kolejka)
-            obsluzeni.push_back(obsluzony);
-    // i czyścimy wektor
+    long long n = kolejki.size();
+    for(int i = 0; i < n; i++)
+        while(kolejki[i]->po != kolejki[i]->przed)
+            obsluzeni.push_back(obsluz(i));
     kolejki.clear();
     return obsluzeni;
 }

@@ -2,7 +2,6 @@
 #define KOL_H
 
 #include <vector>
-#include <deque>
 
 // Wszędzie w zadaniu można założyć, że wskaźniki przekazywane do funkcji są
 // wskaźnikami na struktury interesant, które były kiedyś wynikiem funkcji
@@ -13,7 +12,8 @@
 
 struct interesant {
     int numerek;
-    int kolejka;
+    interesant* przed;
+    interesant* po;
 };
 
 /**
