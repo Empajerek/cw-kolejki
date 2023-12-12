@@ -14,12 +14,28 @@ interesant* nastepny(interesant* current, interesant* previous){
     return current->przed;
 }
 
+void printUrzad(){
+    printf("------------------------------------------------");
+    for(auto kolejka : kolejki){
+        interesant* ludzik = kolejka->po;
+        interesant* ludzikprzed = kolejka;
+        printf("%d : ", kolejka->numerek);
+        do{
+            printf("%d ", ludzik->numerek);
+            interesant* temp = ludzik;
+            ludzik = nastepny(ludzik, ludzikprzed);
+            ludzikprzed = temp;
+        }while(ludzik != kolejka);
+        printf("\n");
+    }
+}
+
 void otwarcie_urzedu(int m){
     for(int i = 0; i < m; i++){
         interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
         new_interesant->przed = new_interesant;
         new_interesant->po = new_interesant;
-        new_interesant->numerek = 0;
+        new_interesant->numerek = i;
         kolejki.push_back(new_interesant);
     }
 }
@@ -102,6 +118,8 @@ void zamkniecie_okienka(int k1, int k2){
 
 // -------------------------------------------------
 std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
+    printf("Przed fast:");
+    printUrzad();
     interesant* lewy1 = i1->przed;
     interesant* lewy2 = i1;
     interesant* prawy1 = i1->po;
@@ -138,6 +156,8 @@ std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
         }
     }
     obsluzeni.push_back(i2);
+    printf("Po fast");
+    printUrzad();
     return obsluzeni;
 }
 
