@@ -39,6 +39,7 @@ int main() {
   assert(!obsluz(2));
   // 0: i4  | 1: i1  | 2:
   naczelnik(0);
+  printf("sdfgh\n");
   // 0: i4  | 1: i1  | 2:
   interesant *i6 = nowy_interesant(2);
   // 0: i4  | 1: i1  | 2: i6
