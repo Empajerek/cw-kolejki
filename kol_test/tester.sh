@@ -1,21 +1,20 @@
 #!/bin/bash
 
-if ! g++ @opcjeCpp tester.cpp kol.cpp -o kol; then
+if ! g++ @opcjeCpp tester.cpp ../kol.cpp -O3 -o kol.exe; then
     echo "Compilation error!"
     exit
 fi
 
 wrong_test=-1
 
-for((i = 0; i < 20; i++)) {
-    echo "-------------------Test number $i-------------------"
+for((i = 0; i < 1000; i++)) {
     
     
-    if ! ./kol $i; then
+    if ! ./kol.exe $i; then
         wrong_test=$i
         break
     else
-        echo "-------------------All correct!----------------------"
+        echo "Test $i correct"
     fi
     
     echo ""

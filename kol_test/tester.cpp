@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iterator>
 #include <set>
-#include "kol.h"
+#include "../kol.h"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ using namespace std;
 // Odkomentuj #undef DEBUG aby pozbyć się wypisywania kroków.
 
 #define DEBUG
-//#undef DEBUG
+#undef DEBUG
 
 #ifdef DEBUG
 #define debug(X) cout << X
@@ -34,8 +34,12 @@ int randint(int a, int b) {
 
 
 int main(int argc, char **argv) {
-    
-    rng = mt19937(4);
+    if(argc > 1) {
+        int seed = stoi(argv[1]);
+        rng = mt19937(seed);
+        debug("ziarno = " << seed << "\n" << flush);
+    }
+
     
     
     // Zakresy można modyfikować aby generować duże/małe testy.
@@ -210,7 +214,7 @@ int main(int argc, char **argv) {
         
         }
         
-        
+        // printUrzad();
         debug("\nstan kolejek:\n");
         for(int i = 0; i < m; i++) {
             debug(i << ": ");
@@ -222,7 +226,7 @@ int main(int argc, char **argv) {
         
     
     }
-    
+    // printUrzad();
     vector<interesant *> v = zamkniecie_urzedu();
     
     vector<interesant *> pozostali;
