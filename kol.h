@@ -16,6 +16,8 @@ struct interesant {
     interesant* po;
 };
 
+void printUrzad();
+
 /**
  * @brief Inicjuje bibliotekę
  *

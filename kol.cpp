@@ -1,7 +1,5 @@
 #include <iostream>
-#include <deque>
 #include <vector>
-#include <algorithm>
 #include "kol.h"
 
 // inicjujemy urząd w postaci wektora
@@ -15,32 +13,42 @@ static int numerki;
  * @param previous poprzedni interesant
  * @return interesant* szukany interesant
  */
-static interesant* nastepny(interesant* &current, interesant* &previous){
+static interesant* nastepny(interesant* current, interesant* previous){
     if(current->przed == previous)
         return current->po;
     return current->przed;
 }
 
 /**
+ * @brief Skleja kolejke z pomocą czterech interesantów
+ * 
+ * @param i1 interesant przed sklejonym
+ * @param i2 interesant doklejany przed
+ * @param i3 interesant dokklejany za
+ * @param i4 iteresant za sklejonymi
+ */
+static void sklej(interesant* i1, interesant* i2, 
+                  interesant* i3, interesant* i4){
+    if(i2->przed == i1)
+        i2->po = i3;
+    else
+        i2->przed = i3;
+    
+    if(i3->po == i4)
+        i3->przed = i2;
+    else
+        i3->po = i2;
+}
+
+/**
  * @brief Usuwa interesanta z kolejki
  *
- * @param i usuwany iteresant
+ * @param i usuwany interesant
  */
-static void wyjdz(interesant* &i){
+static void wyjdz(interesant* i){
     interesant* poprz = i->przed;
     interesant* nast = i->po;
-
-    if(nast->przed == i)
-        nast->przed = poprz;
-    else
-        nast->po = poprz;
-
-    if(poprz->po == i)
-        poprz->po = nast;
-    else
-        poprz->przed = nast;
-    i->po = nullptr;
-    i->przed = nullptr;
+    sklej(nastepny(poprz, i), poprz, nast, nastepny(nast, i));
 }
 
 /**
@@ -49,14 +57,19 @@ static void wyjdz(interesant* &i){
  * @param i dodawany interesant
  * @param k kolejka do której jest dodawany
  */
-static void wejdz(interesant* &i, int k){
-    if(kolejki[k]->przed->po == kolejki[k])
-        kolejki[k]->przed->po = i;
-    else
-        kolejki[k]->przed->przed = i;
-    i->przed = kolejki[k]->przed;
+static void wejdz(interesant* i, int k){
+    if(kolejki[k]->po == kolejki[k]){
+        kolejki[k]->po = i;
+        kolejki[k]->przed = i;
+        i->po = kolejki[k];
+        i->przed = kolejki[k];
+        return;
+    }
+    interesant* l2 = nastepny(kolejki[k]->przed, kolejki[k]);
+    interesant* l1 = kolejki[k]->przed;
     kolejki[k]->przed = i;
     i->po = kolejki[k];
+    sklej(l2, l1, i, kolejki[k]);
 }
 
 void printUrzad(){
@@ -65,8 +78,7 @@ void printUrzad(){
         interesant* ludzik = kolejki[i]->po;
         interesant* ludzikprzed = kolejki[i];
         printf("%d : ", i);
-        volatile interesant* straznik = kolejki[i];
-        while(ludzik != straznik){
+        while(ludzik->numerek != kolejki[i]->numerek){
             printf("%d ", ludzik->numerek);
             interesant* temp = ludzik;
             ludzik = nastepny(ludzik, ludzikprzed);
@@ -112,7 +124,7 @@ int numerek(interesant *i){
 }
 
 interesant *obsluz(int k){
-    if(kolejki[k]->po == kolejki[k]->przed)
+    if(kolejki[k]->po == kolejki[k])
         return NULL;
     interesant* obsluzony = kolejki[k]->po;
     wyjdz(obsluzony);
@@ -122,27 +134,28 @@ interesant *obsluz(int k){
 void zmiana_okienka(interesant *i, int k){
     wyjdz(i);
     wejdz(i, k);
-    printUrzad();
 }
 
 void zamkniecie_okienka(int k1, int k2){
-    if(kolejki[k2]->przed->po == kolejki[k2])
-        kolejki[k2]->przed->po = kolejki[k1]->po;
-    else
-        kolejki[k2]->przed->przed = kolejki[k1]->po;
+    if(kolejki[k2]->po == kolejki[k2])
+        return;
 
-    if(kolejki[k1]->po->przed == kolejki[k1])
-        kolejki[k1]->po->przed = kolejki[k2]->przed;
+    if(kolejki[k2]->po == kolejki[k2])
+        kolejki[k2]->po = kolejki[k1]->po;
     else
-        kolejki[k1]->po->po = kolejki[k2]->przed;
-
+        sklej(nastepny(kolejki[k2]->przed, kolejki[k2]), kolejki[k2]->przed, kolejki[k1]->po, nastepny(kolejki[k1]->po, kolejki[k2]));
+    sklej(nastepny(kolejki[k1]->przed, kolejki[k1]), kolejki[k1]->przed, kolejki[k2], kolejki[k2]->po);
     kolejki[k2]->przed = kolejki[k1]->przed;
     kolejki[k1]->przed = kolejki[k1];
     kolejki[k1]->po = kolejki[k1];
-    printUrzad();
 }
 
 std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
+    if(i1 == i2){
+        wyjdz(i1);
+        std::vector<interesant*> wyjscie = {i1};
+        return wyjscie;
+    }
     interesant* lewy1 = i1->przed;
     interesant* lewy2 = i1;
     interesant* prawy1 = i1->po;
@@ -169,10 +182,21 @@ std::vector<interesant *> fast_track(interesant *i1, interesant *i2){
             obsluzeni_p.push_back(prawy1);
         }
     }
-
-    if(obsluzeni_l.back() == i2)
+    if(obsluzeni_l.back() == i2){
+        interesant* l1 = nastepny(obsluzeni_l[0], obsluzeni_l[1]);
+        interesant* l2 = nastepny(l1, obsluzeni_l[0]);
+        interesant* p1 = nastepny(lewy1, lewy2);
+        interesant* p2 = nastepny(p1, lewy1);
+        sklej(l2, l1, p1, p2);
         return obsluzeni_l;
-    return obsluzeni_p;
+    }else{
+        interesant* l1 = nastepny(obsluzeni_p[0], obsluzeni_p[1]);
+        interesant* l2 = nastepny(l1, obsluzeni_p[0]);
+        interesant* p1 = nastepny(prawy1, prawy2);
+        interesant* p2 = nastepny(p1, prawy1);
+        sklej(l2, l1, p1, p2);
+        return obsluzeni_p;
+    }
 }
 
 void naczelnik(int k){
@@ -184,12 +208,12 @@ void naczelnik(int k){
 std::vector<interesant *> zamkniecie_urzedu(){
     std::vector<interesant*> obsluzeni;
     long long n = kolejki.size();
-    for(int i = 0; i < n; i++)
-        while(kolejki[i]->po != kolejki[i]->przed)
-            obsluzeni.push_back(obsluz(i));
+    for(int i = 0; i < n; i++){
+        while(kolejki[i]->po->numerek != -1){
+            obsluzeni.push_back(obsluz(i)); 
+        }
+        free(kolejki[i]);
+    }      
     kolejki.clear();
-    for(auto obs : obsluzeni)
-        printf("%d ",obs->numerek);
-    printf("\n");
     return obsluzeni;
 }

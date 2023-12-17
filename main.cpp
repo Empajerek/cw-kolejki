@@ -27,7 +27,6 @@ int main() {
   // 0: i2, i3, i5, i4  | 1: i1  | 2:
   naczelnik(0);
   // 0: i4, i5, i3, i2  | 1: i1  | 2:
-
   std::vector<interesant*> v(fast_track(i5, i2));
   // 0: i4  | 1: i1  | 2:
   assert(v.size() == 3U);
@@ -39,16 +38,15 @@ int main() {
   assert(!obsluz(2));
   // 0: i4  | 1: i1  | 2:
   naczelnik(0);
-  printf("sdfgh\n");
   // 0: i4  | 1: i1  | 2:
   interesant *i6 = nowy_interesant(2);
   // 0: i4  | 1: i1  | 2: i6
   interesant *i7 = nowy_interesant(1);
   // 0: i4  | 1: i1, i7  | 2: i6
+  zamkniecie_okienka(0, 1);
   assert(i1 == obsluz(1));
   // 0: i4  | 1: i7  | 2: i6
   free(i1);
-  zamkniecie_okienka(0, 1);
   // 0:  | 1: i7, i4  | 2: i6
   zamkniecie_okienka(2, 1);
   // 0:  | 1: i7, i4, i6  | 2:

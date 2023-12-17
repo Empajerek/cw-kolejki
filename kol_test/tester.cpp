@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iterator>
 #include <set>
-#include "../kol.h"
+#include "kol.h"
 
 using namespace std;
 
@@ -35,11 +35,7 @@ int randint(int a, int b) {
 
 int main(int argc, char **argv) {
     
-    if(argc > 1) {
-        int seed = stoi(argv[1]);
-        rng = mt19937(seed);
-        debug("ziarno = " << seed << "\n" << flush);
-    }
+    rng = mt19937(4);
     
     
     // Zakresy można modyfikować aby generować duże/małe testy.
