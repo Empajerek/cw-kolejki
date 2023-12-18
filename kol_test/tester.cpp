@@ -16,7 +16,7 @@ using namespace std;
 
 // Odkomentuj #undef DEBUG aby pozbyć się wypisywania kroków.
 
-#define DEBUG
+// #define DEBUG
 #undef DEBUG
 
 #ifdef DEBUG
@@ -213,8 +213,6 @@ int main(int argc, char **argv) {
             } break;
         
         }
-        
-        // printUrzad();
         debug("\nstan kolejek:\n");
         for(int i = 0; i < m; i++) {
             debug(i << ": ");
@@ -226,7 +224,6 @@ int main(int argc, char **argv) {
         
     
     }
-    // printUrzad();
     vector<interesant *> v = zamkniecie_urzedu();
     
     vector<interesant *> pozostali;
@@ -237,7 +234,6 @@ int main(int argc, char **argv) {
             kolejki[i].pop_back();
         }
     }
-    
     assert(v == pozostali);
     
     for(auto [num, interesant] : daj_interesanta) {

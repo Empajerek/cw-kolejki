@@ -31,18 +31,18 @@ static interesant* nastepny(interesant* current, interesant* previous){
  */
 static void sklej(interesant* i1, interesant* i2, 
                   interesant* i3, interesant* i4){
+    // kolejka zero-osobowa
+    if(i2 == i3){
+        i2->po = i2;
+        i2->przed = i2;
+        return;
+    }
     // gdy sklejamy kolejke jednoosobową
     if(i2 == i4){
         i2->przed = i3;
         i2->po = i3;
         i3->przed = i2;
         i3->po = i2;
-        return;
-    }
-    // kolejka zero-osobowa
-    if(i2 == i3){
-        i2->po = i2;
-        i2->przed = i2;
         return;
     }
     // pozostałe przypadki
@@ -75,9 +75,11 @@ static void wyjdz(interesant* i){
  * @param k kolejka do której jest dodawany
  */
 static void wejdz(interesant* i, int k){
+    interesant* l2 = nastepny(kolejki[k]->przed, kolejki[k]);
+    interesant* l1 = kolejki[k]->przed;
     kolejki[k]->przed = i;
     i->po = kolejki[k];
-    sklej(nastepny(kolejki[k]->przed, kolejki[k]), kolejki[k]->przed, i, kolejki[k]);
+    sklej(l2, l1, i, kolejki[k]);
 }
 
 /*
@@ -158,7 +160,7 @@ std::vector<interesant*> fast_track(interesant *i1, interesant *i2){
     obsluzeni_l.push_back(lewy1);
     obsluzeni_p.push_back(prawy1);
     while(lewy1 != i2 && prawy1 != i2){
-        // nie chemy przejść przez początek kolejki
+        // nie chcemy przejść przez początek kolejki
         if(lewy1->numerek != -1){
             interesant* temp_l = lewy1;
             lewy1 = nastepny(lewy1, lewy2);
