@@ -24,13 +24,14 @@ static interesant* nastepny(interesant* current, interesant* previous){
 /**
  * @brief Skleja kolejke z pomocą czterech interesantów
  * 
+ * Sklejamy intersanta i2 z i3, tak żeby powstał łańcuch: i1 -- i2 -- i3 -- i4
+ * 
  * @param i1 interesant przed sklejonym
- * @param i2 interesant doklejany przed
- * @param i3 interesant dokklejany za
+ * @param i2 interesant sklejany przed
+ * @param i3 interesant sklejany za
  * @param i4 interesant za sklejonymi
  */
-static void sklej(interesant* i1, interesant* i2, 
-                  interesant* i3, interesant* i4){
+static void sklej(interesant* i1, interesant* i2, interesant* i3, interesant* i4){
     // kolejka zero-osobowa
     if(i2 == i3){
         i2->po = i2;
@@ -96,14 +97,15 @@ static void wejdz(interesant* i, int k){
 */
 
 void otwarcie_urzedu(int m){
+    // kolejki reprezentujemy jako interesantów o numerku -1, dla których "po" jest pierwszy interesant, a "przed" jest ostatnim
     for(int i = 0; i < m; i++){
-        interesant* new_interesant = (interesant*) malloc(sizeof(interesant));
-        new_interesant->przed = new_interesant;
-        new_interesant->po = new_interesant;
-        new_interesant->numerek = -1;
-        kolejki.push_back(new_interesant);
-        numerki = 0;
+        interesant* straznik = (interesant*) malloc(sizeof(interesant));
+        straznik->przed = straznik;
+        straznik->po = straznik;
+        straznik->numerek = -1;
+        kolejki.push_back(straznik);
     }
+    numerki = 0;
 }
 
 interesant* nowy_interesant(int k){
@@ -201,7 +203,7 @@ void naczelnik(int k){
 
 std::vector<interesant *> zamkniecie_urzedu(){
     std::vector<interesant*> obsluzeni;
-    long long n = kolejki.size();
+    int n = (int) kolejki.size();
     for(int i = 0; i < n; i++){
         // obsuługujemy wszystkich pozostałych
         while(kolejki[i]->po->numerek != -1)
@@ -209,5 +211,6 @@ std::vector<interesant *> zamkniecie_urzedu(){
         free(kolejki[i]);
     }      
     kolejki.clear();
+    kolejki.shrink_to_fit();
     return obsluzeni;
 }
