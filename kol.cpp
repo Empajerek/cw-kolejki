@@ -24,7 +24,7 @@ static interesant* nastepny(interesant* current, interesant* previous){
 /**
  * @brief Skleja kolejke z pomocą czterech interesantów
  * 
- * Sklejamy intersanta i2 z i3, tak żeby powstał łańcuch: i1 -- i2 -- i3 -- i4
+ * Sklejamy interesanta i2 z i3, tak żeby powstał łańcuch: i1 -- i2 -- i3 -- i4
  * 
  * @param i1 interesant przed sklejonym
  * @param i2 interesant sklejany przed
